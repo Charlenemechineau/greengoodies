@@ -1,28 +1,13 @@
-# Dépendances
 /vendor/
-
-# Cache / logs / sessions
 /var/
-
-# Variables locales non versionnées
 /.env.local
 /.env.local.php
 /.env.*.local
-
-# Secrets Symfony
 /config/secrets/prod/prod.decrypt.private.php
-
-# Assets générés
 /public/bundles/
 /public/assets/
 /assets/vendor/
-
-# PHPUnit
 /phpunit.xml
 /.phpunit.cache/
-
-# IDE
 /.idea/
-
-# Divers
 /.web-server-pid
