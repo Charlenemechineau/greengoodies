@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - GreenGoodies{% endblock %}
+
+{% block body %}
+    <section class="home-banner">
+        <div class="home-banner-text">
+            <h1>Bienvenue</h1>
+            <p class="intro-text">
+                Découvrez notre univers de produits durables et éthiques
+                pour une consommation responsable
+            </p>
+
+            <p class="intro-text second-text">
+                Retrouvez des articles d’hygiène & beauté,
+                des accessoires & boissons et du prêt à porter
+            </p>
+        </div>
+
+        <div class="home-banner-image">
+            <img src="{{ asset('images/img_banner.png') }}" alt="Bannière GreenGoodies">
+        </div>
+    </section>
+
+    <section class="products-section">
+        <p class="products-label">Nos produits</p>
+
+        <div class="products-grid">
+            {% for product in products %}
+                <article class="product-card">
+                    <div class="product-card-image">
+                        <img src="{{ asset('images/' ~ product.picture) }}" alt="{{ product.name }}">
+                    </div>
+
+                    <div class="product-card-body">
+                        <h2 class="product-card-title">{{ product.name }}</h2>
+                        <p class="product-card-text">{{ product.shortDescription }}</p>
+                        <p class="product-card-price">{{ product.price|number_format(2, ',', ' ') }} €</p>
+                        <a href="{{ path('app_product_detail', {id: product.id}) }}" class="product-card-link">
+                            Voir le produit
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="conviction-section">
+        <article class="conviction-article">
+
+            <div class="conviction-content">
+                <h2>Notre conviction</h2>
+
+                <p>
+                    Chez GreenGoodies, nous croyons en un mode de vie plus responsable.
+                    Notre mission est de proposer une sélection de produits du quotidien
+                    alliant qualité, durabilité et éthique.
+                </p>
+            </div>
+
+            <div class="conviction-image">
+                <img src="{{ asset('images/conviction.jpg') }}" alt="Notre conviction">
+            </div>
+
+        </article>
+    </section>
+
+
+    <section class="values-section">
+        <article class="values-article">
+
+            <div class="values-image">
+                <img src="{{ asset('images/valeurs.jpg') }}" alt="Nos valeurs">
+            </div>
+
+            <div class="values-content">
+                <h2>Nos valeurs</h2>
+
+                <p>
+                    Durabilité : Nous sélectionnons soigneusement des produits qui respectent l'environnement et favorisent la durabilité.
+
+                    Éthique : Nous nous engageons à travailler avec des partenaires et des fournisseurs qui partagent nos valeurs éthiques.
+
+                    Écologie : Nous encourageons des pratiques respectueuses de l'écosystème et privilégions les matériaux écologiques.
+                </p>
+            </div>
+
+        </article>
+    </section>
+{% endblock %}
