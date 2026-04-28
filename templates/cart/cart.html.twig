@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier - GreenGoodies{% endblock %}
+
+{% block body %}
+    <section class="cart-page">
+        <div class="cart-container">
+            <h1>Mon panier</h1>
+
+            {% if items is empty %}
+                <p class="cart-empty">Votre panier est vide.</p>
+                <a href="{{ path('app_home') }}" class="cart-back-link">Retour aux produits</a>
+            {% else %}
+                <a href="{{ path('app_cart_clear') }}" class="cart-clear-link">× Vider le panier</a>
+
+                <div class="cart-box">
+                    {% for item in items %}
+                        <article class="cart-item">
+                            <img
+                                src="{{ asset('images/' ~ item.product.picture) }}"
+                                alt="{{ item.product.name }}"
+                                class="cart-item-image"
+                            >
+
+                            {# bloc qui contient les informations du produit dans le panier #}
+                            <div class="cart-item-info">
+
+                                {# affiche le nom du produit #}
+                                <h2>{{ item.product.name }}</h2>
+
+                                {# affiche la quantité ajoutée au panier #}
+                                <p>Quantité : {{ item.quantity }}</p>
+
+                                {# affiche le prix total de la ligne (prix x quantité) #}
+                                <p class="cart-item-price">
+
+                                    {# format du prix en euro avec virgule française #}
+                                    {{ item.lineTotal|number_format(2, ',', ' ') }}€
+
+                                </p>
+
+                            </div>
+
+                            <a href="{{ path('app_cart_remove', {id: item.product.id}) }}" class="cart-remove-link">
+                                Supprimer
+                            </a>
+                        </article>
+                    {% endfor %}
+
+                    {# zone du total du panier #}
+                    <div class="cart-summary">
+
+                        {# affiche le prix total du panier #}
+                        <div>
+
+                            {# texte total panier #}
+                            <strong>Total panier :</strong>
+
+                            {# affiche le montant total calculé dans le controller 2 décimal virgules française espade pour milliers #}
+                            <span>{{ total|number_format(2, ',', ' ') }}€</span>
+
+                        </div>
+
+                        {# indique que la livraison est offerte #}
+                        <p>Frais de livraison : Offert</p>
+
+                    </div>
+
+                <a href="#" class="cart-validate-button">
+                    Valider la commande
+                </a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

@@ -22,7 +22,7 @@
                     <p>{{ product.fullDescription|nl2br }}</p>
                 </div>
 
-                <a href="#" class="product-detail-button">
+                <a href="{{ path('app_cart_add', {id: product.id}) }}" class="product-detail-button">
                     Ajouter au panier
                 </a>
             </div>
