@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - GreenGoodies{% endblock %}
+
+{% block body %}
+
+    <section class="auth-page">
+
+        <div class="auth-wrapper">
+
+            <div class="auth-image">
+                <img src="{{ asset('images/img_inscription.jpg') }}" alt="Inscription">
+            </div>
+
+            <div class="auth-container">
+
+                <h1>Inscription</h1>
+                <p>Tout les champrs sont obligatoires.</p>
+
+                {{ form_errors(registrationForm) }}
+
+                {{ form_start(registrationForm, {'attr': {'class': 'auth-form'}}) }}
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.lastName, 'Nom') }}
+                    {{ form_widget(registrationForm.lastName) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.firstName, 'Prénom') }}
+                    {{ form_widget(registrationForm.firstName) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(registrationForm.email, 'Email') }}
+                    {{ form_widget(registrationForm.email) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword.first) }}
+                    {{ form_widget(registrationForm.plainPassword.first) }}
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword.second) }}
+                    {{ form_widget(registrationForm.plainPassword.second) }}
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        {{ form_widget(registrationForm.agreeTerms) }}
+                        {{ form_label(registrationForm.agreeTerms, "J'accepte les CGU de GreenGoodies") }}
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-button">
+                    Créer un compte
+                </button>
+
+                {{ form_end(registrationForm) }}
+
+                <p class="auth-link">
+                    Déjà un compte ?
+                    <a href="{{ path('app_login') }}">Se connecter</a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - GreenGoodies{% endblock %}
+
+{% block body %}
+
+    <section class="account-page">
+
+        <h1>Mon compte</h1>
+
+        <div class="account-container">
+
+            <div class="account-card">
+
+                <h2>Mes commandes</h2>
+
+                <table class="orders-table">
+                    <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Date</th>
+                        <th>Prix</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>01/01/2024</td>
+                        <td>185,50€</td>
+                    </tr>
+
+                    <tr>
+                        <td>02</td>
+                        <td>05/01/2024</td>
+                        <td>89,90€</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="account-card">
+
+                <h2>Mon accès API</h2>
+
+                <button class="account-button">
+                    Activer mon accès API
+                </button>
+
+            </div>
+
+            <div class="account-card">
+
+                <button class="account-button delete-button">
+                    Supprimer mon compte
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+{% endblock %}

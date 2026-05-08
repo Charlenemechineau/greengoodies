@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - GreenGoodies{% endblock %}
+
+{% block body %}
+
+<section class="auth-page">
+
+    <div class="auth-wrapper">
+
+        <div class="auth-image">
+            <img src="{{ asset('images/conviction.jpg') }}" alt="Connexion">
+        </div>
+
+        <div class="auth-container">
+
+            <h1>Connexion</h1>
+
+            {% if error %}
+                <div class="auth-error">
+                    Email ou mot de passe incorrect
+                </div>
+            {% endif %}
+
+            <form method="post" class="auth-form">
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" value="{{ last_username }}" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" name="password" required>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="auth-button">
+                    Se connecter
+                </button>
+                <p class="auth-link">
+                    Pas encore de compte ?
+                    <a href="{{ path('app_register') }}">Inscrivez-vous ici</a>
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
