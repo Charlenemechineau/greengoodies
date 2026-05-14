@@ -8,6 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;//permet de stocker les données du panier en session utilisateur//
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Order; //Me permet d'utiliser l'entité Order pour créer une commande à partir du panier//
+use App\Entity\OrderItem; //Me permet d'utiliser l'entité OrderItem pour créer les lignes de commande à partir du panier//
+use Doctrine\ORM\EntityManagerInterface; // Me permet d'interagir avec la base de données pour enregistrer la commande et les lignes de commande//
 
 final class CartController extends AbstractController
 {
@@ -29,7 +32,7 @@ final class CartController extends AbstractController
             $product = $productRepository->find($id);
             // Si le produit existe//
             if ($product) {
-                //  jecalcul du total de la ligne//
+                //  je calcul du total de la ligne//
                 // prix x quantité//
                 $lineTotal = $product->getPrice() * $quantity;
 
@@ -61,7 +64,7 @@ final class CartController extends AbstractController
         // Si déjà présent : on augmente quantité//
         if (isset($cart[$id])) {
             $cart[$id]++;
-        } else {   //// Sinon j'ajoute quantité = 1
+        } else {
             $cart[$id] = 1;
         }
         //Je sauvegarde le panier en session//
@@ -87,7 +90,7 @@ final class CartController extends AbstractController
         return $this->redirectToRoute('app_cart');
     }
 
-    //Route piur vider le panier//
+    //Route pour vider le panier//
     #[Route('/cart/clear', name: 'app_cart_clear')]
     public function clear(SessionInterface $session): Response
     {
@@ -95,6 +98,84 @@ final class CartController extends AbstractController
         $session->remove('cart');
 
         //Redirige ensuite vers mon panier vide//
+        return $this->redirectToRoute('app_cart');
+
+    }
+    // Route qui permet de valider le panier
+// et de créer une commande à partir de son contenu
+    #[Route('/cart/validate', name: 'app_cart_validate')]
+    public function validateCart(
+        SessionInterface       $session, // Permet de récupérer le panier stocké en session//
+        ProductRepository      $productRepository, // Permet de récupérer les produits en base//
+        EntityManagerInterface $entityManager // Permet d'enregistrer la commande en base//
+    ): Response
+    {
+        // Vérifie que l'utilisateur est connecté//
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        // Récupère le panier en session//
+        $cart = $session->get('cart', []);
+
+        // Si le panier est vide, on redirige vers la page panier//
+        if (empty($cart)) {
+            return $this->redirectToRoute('app_cart');
+        }
+
+        // Création de la commande//
+        $order = new Order();
+        $order->setUser($this->getUser());
+        $order->setStatus('validated');
+        $order->setCreatedAt(new \DateTimeImmutable());
+        $order->setValidatedAt(new \DateTimeImmutable());
+
+        // Variable qui contiendra le montant total de la commande//
+        $total = 0;
+
+        // Parcourt chaque produit du panier//
+        foreach ($cart as $id => $quantity) {
+            $product = $productRepository->find($id);
+
+            // Si le produit n'existe plus en base, on l'ignore//
+            if (!$product) {
+                continue;
+            }
+
+            // Calcule le total de la ligne//
+            $lineTotal = $product->getPrice() * $quantity;
+
+            // Création d'une ligne de commande//
+            $orderItem = new OrderItem();
+            $orderItem->setProduct($product);
+            $orderItem->setQuantity($quantity);
+            $orderItem->setUnitPrice($product->getPrice());
+            $orderItem->setTotalPrice($lineTotal);
+
+            // Associe la ligne à la commande//
+            $order->addOrderItem($orderItem);
+
+            // Demande à Doctrine d'enregistrer la ligne de commande//
+            $entityManager->persist($orderItem);
+
+            // Ajoute le total de la ligne au total général//
+            $total += $lineTotal;
+        }
+
+        // Définit le total final de la commande//
+        $order->setTotalPrice($total);
+
+        // Enregistre la commande en base//
+        $entityManager->persist($order);
+        $entityManager->flush();
+
+        // Vide le panier après validation//
+        $session->remove('cart');
+
+        // Message de confirmation affiché à l'utilisateur//
+        $this->addFlash(
+            'success',
+            'Votre commande a été validée avec succès !'
+        );
+
         return $this->redirectToRoute('app_cart');
     }
 }

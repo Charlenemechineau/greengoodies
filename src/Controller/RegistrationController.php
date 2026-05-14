@@ -15,29 +15,51 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
+    // Route qui permet à un utilisateur de créer un compte
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        Security $security,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        // Création d'un nouvel utilisateur
         $user = new User();
+
+        // Création du formulaire d'inscription
         $form = $this->createForm(RegistrationFormType::class, $user);
+
+        // Récupère les données envoyées par le formulaire
         $form->handleRequest($request);
 
+        // Vérifie que le formulaire a été envoyé et qu'il est valide
         if ($form->isSubmitted() && $form->isValid()) {
+
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            // Hash le mot de passe avant enregistrement en base
+            $user->setPassword(
+                $userPasswordHasher->hashPassword($user, $plainPassword)
+            );
+
+            // Désactive l'accès API par défaut
             $user->setApiAccessEnabled(false);
 
+            // Enregistre l'utilisateur en base de données
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
-
-            return $security->login($user, LoginFormAuthenticator::class, 'main');
+            // Connecte automatiquement l'utilisateur après l'inscription
+            return $security->login(
+                $user,
+                LoginFormAuthenticator::class,
+                'main'
+            );
         }
 
+        // Affiche la page d'inscription avec le formulaire
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form,
         ]);
